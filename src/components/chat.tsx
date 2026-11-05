@@ -76,16 +76,19 @@ export function Chat() {
           <Sparkles className="h-5 w-5 text-primary" />
           <span className="text-base font-medium">Matrix AI</span>
         </div>
+        <div className="md:hidden">
+          <ThemeToggle />
+        </div>
       </header>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto">
         {isEmpty ? (
           <div className="mx-auto flex h-full max-w-3xl flex-col justify-center px-4">
             <div className="mb-8 space-y-2">
-              <h1 className="text-3xl font-medium tracking-tight">
+              <h1 className="text-2xl font-medium tracking-tight sm:text-3xl">
                 你好，
               </h1>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-base text-muted-foreground sm:text-lg">
                 今天能帮你做什么？
               </p>
             </div>
@@ -149,7 +152,7 @@ export function Chat() {
         </div>
       </footer>
 
-      <div className="fixed bottom-3 left-3 z-10">
+      <div className="fixed bottom-3 left-3 z-10 hidden md:block">
         <ThemeToggle />
       </div>
     </div>

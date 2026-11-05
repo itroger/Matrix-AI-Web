@@ -48,7 +48,7 @@ export function ModelSwitch({ value, onChange, disabled }: ModelSwitchProps) {
         />
       </button>
       {open && (
-        <div className="absolute bottom-full right-0 z-20 mb-2 w-56 overflow-hidden rounded-xl border bg-background shadow-lg">
+        <div className="absolute bottom-full right-0 z-20 mb-2 w-52 overflow-hidden rounded-xl border bg-background shadow-lg sm:w-56">
           <div className="max-h-72 overflow-y-auto p-1">
             {MODEL_OPTIONS.map((opt, i) => {
               const showDivider = i === cloudStart;

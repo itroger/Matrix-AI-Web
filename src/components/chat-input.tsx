@@ -60,7 +60,7 @@ export function ChatInput({
           重新生成
         </button>
       )}
-      <div className="flex items-end gap-2 rounded-3xl border bg-muted/50 px-4 py-2 shadow-sm focus-within:ring-1 focus-within:ring-ring">
+      <div className="flex items-end gap-2 rounded-3xl border border-border/60 bg-muted/40 px-4 py-2 transition-all focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20">
         <textarea
           ref={ref}
           value={value}
@@ -69,7 +69,7 @@ export function ChatInput({
           onInput={onInput}
           rows={1}
           placeholder="输入消息"
-          className="flex-1 resize-none bg-transparent py-1.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none max-h-[200px]"
+          className="flex-1 resize-none bg-transparent py-1.5 text-sm placeholder:text-muted-foreground/60 focus-visible:outline-none max-h-[200px]"
         />
         {addon}
         <button
