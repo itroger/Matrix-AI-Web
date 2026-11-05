@@ -2,6 +2,7 @@
 
 import { type UIMessage } from "ai";
 import { Streamdown } from "streamdown";
+import { code } from "@streamdown/code";
 
 import { ToolCallCard } from "@/components/tool-call-card";
 import { cn } from "@/lib/utils";
@@ -61,14 +62,22 @@ export function ChatMessage({ message }: ChatMessageProps) {
                 </div>
               );
             }
+            const isStreaming = p.state === "streaming";
             return (
-              <div key={i} className="streamdown-body">
-                <Streamdown
-                  mode={p.state === "streaming" ? "streaming" : "static"}
-                >
-                  {text}
-                </Streamdown>
-              </div>
+              <Streamdown
+                key={i}
+                mode={isStreaming ? "streaming" : "static"}
+                plugins={{ code }}
+                shikiTheme={["github-light", "github-dark"]}
+                parseIncompleteMarkdown={isStreaming}
+                normalizeHtmlIndentation
+                dir="auto"
+                animated={isStreaming}
+                isAnimating={isStreaming}
+                className="streamdown-body"
+              >
+                {text}
+              </Streamdown>
             );
           }
 
