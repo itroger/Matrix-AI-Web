@@ -1,6 +1,7 @@
 "use client";
 
 import { type UIMessage } from "ai";
+import { Sparkles } from "lucide-react";
 import { Streamdown } from "streamdown";
 import { code } from "@streamdown/code";
 
@@ -39,29 +40,40 @@ function getToolName(part: AnyPart): string {
 export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === "user";
 
+  if (isUser) {
+    return (
+      <div className="flex justify-end">
+        <div className="max-w-[80%] space-y-2 rounded-2xl bg-muted px-4 py-2.5">
+          {message.parts.map((part, i) => {
+            const p = part as unknown as AnyPart;
+            if (p.type === "text") {
+              const text = p.text ?? "";
+              if (!text) return null;
+              return (
+                <div key={i} className="whitespace-pre-wrap text-sm leading-relaxed">
+                  {text}
+                </div>
+              );
+            }
+            return null;
+          })}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className={cn("flex", isUser ? "justify-end" : "justify-start")}>
-      <div
-        className={cn(
-          "max-w-[85%] space-y-2",
-          isUser
-            ? "rounded-2xl bg-primary px-4 py-2 text-primary-foreground"
-            : "w-full space-y-3",
-        )}
-      >
+    <div className="flex gap-3">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+        <Sparkles className="h-4 w-4" />
+      </div>
+      <div className="min-w-0 flex-1 space-y-3 pt-1">
         {message.parts.map((part, i) => {
           const p = part as unknown as AnyPart;
 
           if (p.type === "text") {
             const text = p.text ?? "";
             if (!text) return null;
-            if (isUser) {
-              return (
-                <div key={i} className="whitespace-pre-wrap">
-                  {text}
-                </div>
-              );
-            }
             const isStreaming = p.state === "streaming";
             return (
               <Streamdown

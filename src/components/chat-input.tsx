@@ -1,9 +1,9 @@
 "use client";
 
-import { type KeyboardEvent, useRef, useState } from "react";
-import { RefreshCw, Send, Square } from "lucide-react";
+import { type KeyboardEvent, type ReactNode, useRef, useState } from "react";
+import { ArrowUp, RefreshCw, Square } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface ChatInputProps {
   onSend: (text: string) => void;
@@ -11,6 +11,7 @@ interface ChatInputProps {
   onRegenerate: () => void;
   isLoading: boolean;
   canRegenerate: boolean;
+  addon?: ReactNode;
 }
 
 export function ChatInput({
@@ -19,6 +20,7 @@ export function ChatInput({
   onRegenerate,
   isLoading,
   canRegenerate,
+  addon,
 }: ChatInputProps) {
   const [value, setValue] = useState("");
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -45,47 +47,54 @@ export function ChatInput({
     el.style.height = Math.min(el.scrollHeight, 200) + "px";
   };
 
+  const canSend = value.trim().length > 0;
+
   return (
-    <div className="flex items-end gap-2">
-      <textarea
-        ref={ref}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onKeyDown={onKeyDown}
-        onInput={onInput}
-        rows={1}
-        placeholder="输入消息，Enter 发送，Shift+Enter 换行"
-        className="flex-1 resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring max-h-[200px]"
-      />
+    <div className="space-y-2">
       {canRegenerate && (
-        <Button
-          variant="outline"
-          size="icon"
+        <button
           onClick={onRegenerate}
-          title="重新生成"
+          className="mx-auto flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted"
         >
-          <RefreshCw />
-        </Button>
+          <RefreshCw className="h-3 w-3" />
+          重新生成
+        </button>
       )}
-      {isLoading ? (
-        <Button
-          variant="destructive"
-          size="icon"
-          onClick={onStop}
-          title="停止"
+      <div className="flex items-end gap-2 rounded-3xl border bg-muted/50 px-4 py-2 shadow-sm focus-within:ring-1 focus-within:ring-ring">
+        <textarea
+          ref={ref}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={onKeyDown}
+          onInput={onInput}
+          rows={1}
+          placeholder="输入消息"
+          className="flex-1 resize-none bg-transparent py-1.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none max-h-[200px]"
+        />
+        {addon}
+        <button
+          onClick={isLoading ? onStop : submit}
+          disabled={!isLoading && !canSend}
+          aria-label={isLoading ? "停止" : "发送"}
+          className={cn(
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors",
+            isLoading
+              ? "bg-destructive text-destructive-foreground"
+              : canSend
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-muted-foreground",
+          )}
         >
-          <Square />
-        </Button>
-      ) : (
-        <Button
-          size="icon"
-          onClick={submit}
-          disabled={!value.trim()}
-          title="发送"
-        >
-          <Send />
-        </Button>
-      )}
+          {isLoading ? (
+            <Square className="h-4 w-4" />
+          ) : (
+            <ArrowUp className="h-4 w-4" />
+          )}
+        </button>
+      </div>
+      <p className="text-center text-xs text-muted-foreground">
+        Matrix AI 可能会出错，请核实重要信息
+      </p>
     </div>
   );
 }
