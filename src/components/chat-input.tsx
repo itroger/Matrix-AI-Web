@@ -79,9 +79,9 @@ export function ChatInput({
           className={cn(
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors",
             isLoading
-              ? "bg-destructive text-destructive-foreground"
+              ? "bg-foreground text-background hover:bg-foreground/80"
               : canSend
-                ? "bg-primary text-primary-foreground"
+                ? "bg-primary text-primary-foreground hover:bg-primary/90"
                 : "bg-muted text-muted-foreground",
           )}
         >
