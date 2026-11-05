@@ -8,19 +8,24 @@ import { AlertCircle, MessageSquare } from "lucide-react";
 import { ChatInput } from "@/components/chat-input";
 import { ChatMessage } from "@/components/chat-message";
 import { ModelSwitch } from "@/components/model-switch";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { AUTO, routeFromValue } from "@/lib/models";
 
 export function Chat() {
-  const [preferCloud, setPreferCloud] = useState(false);
+  const [modelValue, setModelValue] = useState<string>(AUTO);
 
   const transport = useMemo(
     () =>
-        new DefaultChatTransport({
-          api: "/api/chat",
-          prepareSendMessagesRequest: ({ body, messages }) => ({
-            body: { ...body, messages, preferCloud },
-          }),
-        }),
-    [preferCloud],
+      new DefaultChatTransport({
+        api: "/api/chat",
+        prepareSendMessagesRequest: ({ body, messages }) => {
+          const route = routeFromValue(modelValue);
+          return {
+            body: { ...body, messages, ...(route ? { route } : {}) },
+          };
+        },
+      }),
+    [modelValue],
   );
 
   const { messages, sendMessage, status, stop, error, regenerate } = useChat({
@@ -42,11 +47,14 @@ export function Chat() {
           <MessageSquare className="h-5 w-5" />
           <span className="text-lg font-semibold">Matrix AI Chat</span>
         </div>
-        <ModelSwitch
-          preferCloud={preferCloud}
-          onChange={setPreferCloud}
-          disabled={isLoading}
-        />
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+          <ModelSwitch
+            value={modelValue}
+            onChange={setModelValue}
+            disabled={isLoading}
+          />
+        </div>
       </header>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto">

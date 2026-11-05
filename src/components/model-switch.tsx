@@ -1,6 +1,6 @@
 "use client";
 
-import { Cpu, Cloud } from "lucide-react";
+import { Cpu, Cloud, Zap } from "lucide-react";
 
 import {
   Tooltip,
@@ -8,52 +8,49 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
+import { AUTO, MODEL_OPTIONS, routeFromValue } from "@/lib/models";
 
 interface ModelSwitchProps {
-  preferCloud: boolean;
-  onChange: (value: boolean) => void;
+  value: string;
+  onChange: (value: string) => void;
   disabled?: boolean;
 }
 
-export function ModelSwitch({
-  preferCloud,
-  onChange,
-  disabled,
-}: ModelSwitchProps) {
+export function ModelSwitch({ value, onChange, disabled }: ModelSwitchProps) {
+  const route = routeFromValue(value);
+  const isLocal = route === "local";
+  const isAuto = route === undefined;
+
+  const Icon = isAuto ? Zap : isLocal ? Cpu : Cloud;
+  const hint =
+    value === "auto"
+      ? "自动：本地优先，离线降级云端"
+      : value === "local"
+        ? "本地 MLX：强制本地 gemma-4"
+        : `云端模型：${value}`;
+
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="flex items-center gap-2">
-        <Badge
-          variant={preferCloud ? "outline" : "secondary"}
-          className="gap-1"
-        >
-          <Cpu className="h-3 w-3" />
-          本地
-        </Badge>
+      <div className="flex items-center gap-1.5">
+        <Icon className="h-4 w-4 text-muted-foreground" />
         <Tooltip>
           <TooltipTrigger asChild>
-            <Switch
-              checked={preferCloud}
-              onCheckedChange={onChange}
+            <select
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
               disabled={disabled}
-              aria-label="切换本地/云端模型"
-            />
+              aria-label="选择模型"
+              className="h-8 max-w-[10rem] truncate rounded-md border border-input bg-background px-2 text-sm text-foreground outline-none transition-colors focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {MODEL_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
           </TooltipTrigger>
-          <TooltipContent>
-            {preferCloud
-              ? "当前：云端 Claude"
-              : "当前：本地 MLX（离线自动降级云端）"}
-          </TooltipContent>
+          <TooltipContent>{hint}</TooltipContent>
         </Tooltip>
-        <Badge
-          variant={preferCloud ? "secondary" : "outline"}
-          className="gap-1"
-        >
-          <Cloud className="h-3 w-3" />
-          云端
-        </Badge>
       </div>
     </TooltipProvider>
   );
